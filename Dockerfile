@@ -13,6 +13,22 @@ ADD . /data/web
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
     php composer-setup.php --install-dir=. --filename=composer && \
     ./composer install -o && \
-    echo "DB_CONNECTION=sqlite" > .env && \
-    echo "VIEW_CACHE=false" >> .env && \
+    rm -rf composer-setup.php composer
+
+# setup php and application
+RUN echo -e "#!/usr/bin/with-contenv sh\necho setting env\nenv > /data/web/.env" > /etc/cont-init.d/app-env && \
+    chmod 0755 /etc/cont-init.d/app-env && \
     sed -i 's/^short_open_tag = Off/short_open_tag = On/' /etc/php5/php.ini
+
+ENV APP_ENV=local \
+    APP_DEBUG=true \
+    APP_KEY=0123456789abcdef \
+    DB_CONNECTION=sqlite \
+    DB_HOST=- \
+    DB_DATABASE=estatezilla \
+    DB_USERNAME=- \
+    DB_PASSWORD=-\
+    DB_PORT=- \
+    VIEW_CACHE=false \
+    CACHE_DRIVER=file \
+    SESSION_DRIVER=file
