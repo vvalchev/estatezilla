@@ -1,0 +1,4 @@
+Dockerfile
+.git*
+composer
+composer-setup.php
